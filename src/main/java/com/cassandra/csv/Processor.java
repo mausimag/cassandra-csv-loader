@@ -1,7 +1,6 @@
 package com.cassandra.csv;
 
 import java.io.File;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,7 +18,9 @@ public class Processor
 
     public void processFile(Config config)
     {
-        final ConnectionFactory conn = new ConnectionFactory();
+        final Cassandra conn = new Cassandra();
+        final String tablename = config.getTablename();
+        final String columns = config.getColumns();
         conn.connect(config.getHost(), config.getKeyspace());
 
         CsvLoader csv = new CsvLoader();
@@ -28,10 +29,9 @@ public class Processor
         csv.forEachLine(new Line() {
             @Override
             public void line(String ln) {
-                String line[] = {"a" + new Random().nextInt(), "2", "3", "4", "5"};
-                String query = String.format("insert into teste (coluna1, coluna2, coluna3, coluna4, coluna5) " + "values ('%s', '%s', '%s', '%s', '%s');", line[0], line[1], line[2], line[3], line[4]);
+                String query = Cassandra.Query.buildInsert(tablename, columns, ln);
+                //System.out.println(query);
                 conn.getSession().execute(query);
-                System.out.println(query);
             }
         });
 

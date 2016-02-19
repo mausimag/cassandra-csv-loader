@@ -1,5 +1,7 @@
 package com.cassandra.csv;
 
+import java.nio.file.Paths;
+
 /**
  * Created by radix on 2/19/16.
  */
@@ -8,6 +10,7 @@ public class Config {
     private String host;
     private String keyspace;
     private String tablename;
+    private String columns;
 
     public String getPath() {
         return path;
@@ -41,6 +44,14 @@ public class Config {
         this.tablename = tablename;
     }
 
+    public String getColumns() {
+        return columns;
+    }
+
+    public void setColumns(String columns) {
+        this.columns = columns;
+    }
+
     public void parseArgs(String[] args)
     {
         for (String arg : args) {
@@ -56,10 +67,17 @@ public class Config {
                 case "--keyspace":
                     setKeyspace(p[1]);
                     break;
-                case "--table":
+                case "--tablename":
                     setTablename(p[1]);
                     break;
+                case "--columns":
+                    setColumns(p[1]);
+                    break;
             }
+        }
+
+        if (tablename == null || tablename.isEmpty()) {
+            setTablename(Paths.get(path).getFileName().toString().replaceFirst("[.][^.]+$", ""));
         }
     }
 }

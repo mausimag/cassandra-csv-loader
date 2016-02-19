@@ -34,28 +34,12 @@ public class CsvLoader
             while ((line = reader.readLine()) != null)
             {
                 counter++;
-                System.out.println("Processed: " + counter + " lines");
-
                 val.line(line);
             }
         } catch (IOException e)
         {
             System.err.println(e);
         }
-    }
-
-    public void forEachLine(String delimiter, ParsedLine val)
-    {
-        String line;
-        try (BufferedReader reader = Files.newBufferedReader(filePath, charset))
-        {
-            while ((line = reader.readLine()) != null)
-            {
-                val.line(line.split(delimiter));
-            }
-        } catch (IOException e)
-        {
-            System.err.println(e);
-        }
+        System.out.println("Finished " + filePath.getFileName() + ", lines " + counter);
     }
 }
