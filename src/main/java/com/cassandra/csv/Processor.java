@@ -1,6 +1,11 @@
 package com.cassandra.csv;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+
 import java.io.File;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,6 +37,14 @@ public class Processor
         conn.close();
     }
 
+    /*public BigInteger updateBucket(String value, DateTime end) {
+        if(value == null) return BigInteger.valueOf(0L);
+
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+        DateTime start = new DateTime(sf.parse("1970-01-01 12:00:00+0000"));
+        BigInteger.apply(Days.daysBetween(start, end).getDays().toString + value);
+    }*/
+
     public void processDirectory(final Config config)
     {
         File folder = new File(config.getPath());
@@ -55,6 +68,8 @@ public class Processor
                         csv.forEachLine(new Line() {
                             @Override
                             public void line(String ln) {
+                                String vals[] = ln.split(",");
+                                String strBucket = vals[0];
                                 String query = Cassandra.Query.buildInsert(tablename, columns, ln);
                                 conn.getSession().execute(query);
                             }

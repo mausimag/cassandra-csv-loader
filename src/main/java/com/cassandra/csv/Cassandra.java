@@ -40,6 +40,11 @@ public class Cassandra
             return value;
         }
 
+        public void updateColumn()
+        {
+
+        }
+
         public static String buildInsert(String tablename, String columns, String line)
         {
             String values[] = line.split(",");
