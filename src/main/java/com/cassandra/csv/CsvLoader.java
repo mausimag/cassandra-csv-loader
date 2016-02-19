@@ -40,6 +40,7 @@ public class CsvLoader
         {
             System.err.println(e);
         }
+
         System.out.println("Finished " + filePath.getFileName() + ", lines " + counter);
     }
 }

@@ -55,9 +55,7 @@ public class Processor
             if (listOfFiles[i].isFile())
             {
                 final String path = listOfFiles[i].getAbsolutePath();
-                ex.submit(new Runnable() {
-                    @Override
-                    public void run() {
+
                         final Cassandra conn = new Cassandra();
                         final String tablename = config.getTablename();
                         final String columns = config.getColumns();
@@ -75,8 +73,6 @@ public class Processor
                             }
                         });
                         conn.close();
-                    }
-                });
             }
         }
     }
