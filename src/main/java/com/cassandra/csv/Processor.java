@@ -1,11 +1,6 @@
 package com.cassandra.csv;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-
 import java.io.File;
-import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,11 +9,14 @@ import java.util.concurrent.Executors;
  */
 public class Processor
 {
-    private ExecutorService ex = Executors.newFixedThreadPool(10);
+    public void defineBucket()
+    {
 
+    }
+    
     public void processFile(Config config)
     {
-        final Cassandra conn = new Cassandra();
+        final Cassandra.Connection conn = new Cassandra.Connection();
         final String tablename = config.getTablename();
         final String columns = config.getColumns();
         conn.connect(config.getHost(), config.getKeyspace());
@@ -26,24 +24,19 @@ public class Processor
         CsvLoader csv = new CsvLoader();
         csv.open(config.getPath());
 
-        csv.forEachLine(new Line() {
+        csv.forEachLine(new Line()
+        {
             @Override
-            public void line(String ln) {
+            public void line(String ln)
+            {
                 String query = Cassandra.Query.buildInsert(tablename, columns, ln);
-                conn.getSession().execute(query);
+                System.out.println(ln);
+               // conn.getSession().execute(query);
             }
         });
 
         conn.close();
     }
-
-    /*public BigInteger updateBucket(String value, DateTime end) {
-        if(value == null) return BigInteger.valueOf(0L);
-
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
-        DateTime start = new DateTime(sf.parse("1970-01-01 12:00:00+0000"));
-        BigInteger.apply(Days.daysBetween(start, end).getDays().toString + value);
-    }*/
 
     public void processDirectory(final Config config)
     {
@@ -55,24 +48,25 @@ public class Processor
             if (listOfFiles[i].isFile())
             {
                 final String path = listOfFiles[i].getAbsolutePath();
+                final Cassandra.Connection conn = new Cassandra.Connection();
+                final String tablename = config.getTablename();
+                final String columns = config.getColumns();
+                conn.connect(config.getHost(), config.getKeyspace());
+                CsvLoader csv = new CsvLoader();
+                csv.open(path);
 
-                        final Cassandra conn = new Cassandra();
-                        final String tablename = config.getTablename();
-                        final String columns = config.getColumns();
-                        conn.connect(config.getHost(), config.getKeyspace());
-                        CsvLoader csv = new CsvLoader();
-                        csv.open(path);
-
-                        csv.forEachLine(new Line() {
-                            @Override
-                            public void line(String ln) {
-                                String vals[] = ln.split(",");
-                                String strBucket = vals[0];
-                                String query = Cassandra.Query.buildInsert(tablename, columns, ln);
-                                conn.getSession().execute(query);
-                            }
-                        });
-                        conn.close();
+                csv.forEachLine(new Line()
+                {
+                    @Override
+                    public void line(String ln)
+                    {
+                        String vals[] = ln.split(",");
+                        String strBucket = vals[0];
+                        String query = Cassandra.Query.buildInsert(tablename, columns, ln);
+                        conn.getSession().execute(query);
+                    }
+                });
+                conn.close();
             }
         }
     }

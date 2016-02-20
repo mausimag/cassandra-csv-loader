@@ -9,25 +9,28 @@ import com.sun.org.apache.xpath.internal.SourceTree;
  */
 public class Cassandra
 {
-    private Cluster cluster = null;
-    private Session session = null;
-
-    public void connect(String host, String keyspace)
+    public static class Connection
     {
-        cluster = Cluster.builder().addContactPoint(host).build();
-        session = cluster.connect(keyspace);
-    }
+        private Cluster cluster = null;
+        private Session session = null;
 
-    public Session getSession()
-    {
-        return session;
-    }
+        public void connect(String host, String keyspace)
+        {
+            cluster = Cluster.builder().addContactPoint(host).build();
+            session = cluster.connect(keyspace);
+        }
+
+        public Session getSession()
+        {
+            return session;
+        }
 
 
-    public void close()
-    {
-        cluster.close();
-        session.close();
+        public void close()
+        {
+            cluster.close();
+            session.close();
+        }
     }
 
 
