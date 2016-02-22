@@ -72,5 +72,10 @@ public class Cassandra
 
             return String.format("INSERT INTO %s (%s) VALUES (%s);", tablename, colsStr, valuesStr);
         }
+
+        public static String buildDelete(String tablename, String line)
+        {
+            return String.format("DELETE FROM %s WHERE (%s);", tablename, line);
+        }
     }
 }
